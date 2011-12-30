@@ -3,8 +3,4 @@
 
 class bsdImporter {
 
-
-
-
-	
 }
