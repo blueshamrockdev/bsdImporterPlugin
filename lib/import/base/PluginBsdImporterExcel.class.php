@@ -1,10 +1,9 @@
-
 <?PHP
 
-abstract class PluginBsdImporterExcel implements PluginBsdImporter
+class PluginBsdImporterExcel extends  PluginBsdImporter
 {
- 	protected $requiredHeaders = array();
  	protected $headerRow;
+ 	protected $activeSheet;
 
 
 	/**
@@ -26,31 +25,29 @@ abstract class PluginBsdImporterExcel implements PluginBsdImporter
 	}
 
 
-	/**
-	 *
-	 * @param array $headers
-	 */
-	public function setHeaders(array $headers)
-	{
-		$this->requiredHeaders = $headers;
-	}
+  /**
+   *
+   * @param int|String $activeSheet
+   */
+   public function setActiveSheet($sheetNumber)
+   {
+      $this->activeSheet = $sheetNumber;
+   }
 
 	/**
 	 *
-	 * @return array
+	 * @return int|String
 	 */
-	public function getHeaders()
-	{
-		return $this->requiredHeaders;
-	}
-
-
+   public function getActiveSheet()
+   {
+      return $this->activeSheet;
+   }
 
 	public function openFileForReading($uploadFile)
 	{
 		$baseFileReader = new ExcelExplorer();
 		$status = $baseFileReader->ExploreFile($uploadFile);
-		$baseFile = $baseFileReader->Worksheet(0);
+		$baseFile = $baseFileReader->Worksheet($this->getActiveSheet());
 
 		if ($status != EE_OK)
 		{

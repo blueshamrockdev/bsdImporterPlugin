@@ -1,22 +1,5 @@
 <?PHP
 
-abstract class PluginBsdImporterCsv implements PluginBsdImporter
+class PluginBsdImporterCsv extends PluginBsdImporter
 {
- 	protected $requiredHeaders = array();
-
-	/**
-	 *
-	 * @param array $headers
-	 */
-	public function setHeaders(array $headers)
-	{
-		$this->requiredHeaders = $headers;
-	}
-
-	public function getHeaders()
-	{
-		return $this->requiredHeaders;
-	}
-
-
 }
