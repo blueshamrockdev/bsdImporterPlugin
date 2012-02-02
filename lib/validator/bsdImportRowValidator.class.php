@@ -17,6 +17,11 @@ class bsdImportRowValidator  extends sfValidatorBase
     return (bool) (count($array) != count($array, COUNT_RECURSIVE));
   }
 
+  public function clean($value)
+  {
+      $this->doClean($value);
+  }
+
   protected function doClean($value)
   {
     $RowToBeValidated = $value;
