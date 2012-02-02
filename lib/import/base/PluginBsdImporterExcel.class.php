@@ -25,25 +25,6 @@ class PluginBsdImporterExcel extends PluginBsdImporter
 		return $this->headerRow;
 	}
 
-
-  /**
-   *
-   * @param int|String $activeSheet
-   */
-   public function setActiveSheet($sheetNumber)
-   {
-      $this->activeSheet = $sheetNumber;
-   }
-
-	/**
-	 *
-	 * @return int|String
-	 */
-   public function getActiveSheet()
-   {
-      return $this->activeSheet;
-   }
-
 	public function openFileForReading($uploadFile)
 	{
 		$baseFileReader = new ExcelExplorer();

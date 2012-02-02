@@ -3,9 +3,13 @@
 abstract PluginBsdImporter implements PluginBsdImporterInterface 
 {
 
+  public const PRE_PROCCESS_VALIDATE = 1;
+  public const BY_ROW_VALIDATE = 2;
+
  	protected $requiredHeaders = array();
  	protected $requiredFields = array();
  	protected $DataRows = array();
+  protected $validation = $this->PRE_PROCESS_VALIDATE;
 
 	/**
 	 *
@@ -24,8 +28,17 @@ abstract PluginBsdImporter implements PluginBsdImporterInterface
 	 */
 	public function getHeaders()
 	{
-		return $this->requiredHeaders;
-	}
+		return $this->requiredHeaders; 
+  } 
+  public function setValidation($validationTime)
+  {
+     if($validationTime != self::PRE_PROCESS_VALIDATE || $validationTime != self::BY_ROW_VALIDATE)
+     {
+     }
+
+     $this->validation = $validationTime;
+
+  }
 
         /**
          * 
