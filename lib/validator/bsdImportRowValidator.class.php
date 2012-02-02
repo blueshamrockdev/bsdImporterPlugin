@@ -6,7 +6,7 @@ class bsdImportRowValidator  extends sfValidatorBase
   protected function configure($options = array(), $messages = array())
   {
     $this->addMessage('reqdFields', 'Required Field (%reqdField%) is not present.');
-    $this->addMessage('multiDemArray', 'bsdImportRowValidator expected a single row but found many. Possibly bsdImportRowValidator was given all rows?');
+    $this->addMessage('multiDemArray', __CLASS __ ." expected a single row but found many. Possibly " . __CLASS __ . " was given all rows?");
 
     $this->addOption('reqdFields');
   }

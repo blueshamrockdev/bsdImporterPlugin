@@ -1,13 +1,13 @@
 <?PHP
 
-class bsdImportRowValidator  extends sfValidatorBase 
+class bsdImportValidator  extends sfValidatorBase 
 {
 
   protected function configure($options = array(), $messages = array())
   {
 
     $this->addMessage('reqdFields', 'Required Field (%reqdField%) is not present on line: %line%.');
-    $this->addMessage('NotMultiDemArray', 'bsdImportRowValidator expected a multidemensional array but found only a single array was found. Possibly bsdImportRowValidator was given a single row?');
+    $this->addMessage('NotMultiDemArray', __CLASS__  ." expected a multidemensional array but found only a single array was found. Possibly ". __CLASS__ . " was given a single row?");
 
     $this->addOption('reqdFields');
 
