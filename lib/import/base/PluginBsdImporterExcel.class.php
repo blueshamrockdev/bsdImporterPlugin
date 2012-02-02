@@ -1,9 +1,10 @@
 <?PHP
 
-class PluginBsdImporterExcel extends  PluginBsdImporter
+class PluginBsdImporterExcel extends PluginBsdImporter
 {
  	protected $headerRow;
  	protected $activeSheet;
+ 	protected $excelType;
 
 
 	/**

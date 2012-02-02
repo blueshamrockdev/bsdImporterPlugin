@@ -5,16 +5,23 @@ abstract PluginBsdImporter implements PluginBsdImporterInterface
 
  	protected $requiredHeaders = array();
  	protected $requiredFields = array();
+ 	protected $DataRows = array();
 
 	/**
 	 *
-	 * @param array $headers
+   * alias for setRequiredHeaders
+	 * @param array $headers 
 	 */
 	public function setHeaders(array $headers)
 	{
 		$this->requiredHeaders = $headers;
 	}
 
+  /**
+	 *
+   * alias for getRequiredHeaders
+	 * @return array $headers 
+	 */
 	public function getHeaders()
 	{
 		return $this->requiredHeaders;
@@ -99,5 +106,14 @@ abstract PluginBsdImporter implements PluginBsdImporterInterface
                 $string{0} = strtolower($string{0});
                 return $string;
         }
+
+        public function execute() 
+        {
+            /** does nothing here 
+             * all the magic is handled in the user's class's execute()
+             * I don't know what you want to do with your imports... 
+             * I'm not psychic :D
+             */
+        } 
 
 }

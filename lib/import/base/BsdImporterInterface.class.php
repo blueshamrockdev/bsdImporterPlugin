@@ -9,5 +9,6 @@ interface PluginBsdImporterInterface
 
 	public function getHeaders();
 
+  public function execute();
 	
 }
