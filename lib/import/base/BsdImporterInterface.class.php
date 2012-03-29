@@ -3,12 +3,26 @@
 interface PluginBsdImporterInterface 
 {
 
- 	protected $requiredHeaders = array();
+    protected $requiredHeaders = array();
 
-	public function setHeaders();
+    /**
+     * alias for setRequiredHeaders
+     */
+    public function setHeaders(array $headers);
 
-	public function getHeaders();
+    /**
+     * alias for getRequiredHeaders
+     */
+    public function getHeaders();
 
-  public function execute();
+    /**
+     * the actual import process
+     */
+    public function processImport($dryRun = false);
+
+    /**
+     * action to execute for each row during import process
+     */
+    public function execute($row);
 	
 }
