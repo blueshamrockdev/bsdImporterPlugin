@@ -142,6 +142,15 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
         return $string;
     }
 
+    /**
+     * processImport() - Runs validation and beings import functonality 
+     * dryRun gives you the optional parameter that can be passed
+     * on to your execute function so you can treat dryRun import 
+     * differently than a real import.
+     * 
+     * @param boolean $dryRun 
+     * @return array
+     */
     public function processImport($dryRun = false)
     {
         if ( $this->validation ==  self::PRE_PROCCESS_VALIDATE )
@@ -164,21 +173,21 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
                         }
                 }
 
-                if($dryRun)
-                {
-                        $this->dryRunExecute($rowData);
-                }
-                else {
-                        $this->execute($rowData);
-                }
+                $this->execute($rowData, $dryRun);
+                
         }
         return array("success" => true);
     }
+    
     /**
-     *
-     *
+     * execute() - Programmer defined logic for what should be done 
+     * with each row as it's processed. 
+     * 
+     * @see processImport()
+     * @param array $row
+     * @param boolean $dryRun 
      */
-    public function execute($row) 
+    public function execute($row, $dryRun = false) 
     {
         /** 
          *

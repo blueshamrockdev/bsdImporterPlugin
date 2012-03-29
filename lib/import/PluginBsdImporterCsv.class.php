@@ -14,6 +14,12 @@ class PluginBsdImporterCsv extends PluginBsdImporter
         }
     }
 
+    /**
+     * validateHeaders() - Examines the header row in given csv
+     * file and verifies that these headers exist.
+     * 
+     * @return boolean 
+     */
     public function validateHeaders()
     {
         foreach($this->getRequiredHeaders() as $key => $header)
@@ -27,6 +33,14 @@ class PluginBsdImporterCsv extends PluginBsdImporter
         return true;
     }
   
+    /**
+     * validateRequiredFieldsInRow() - examines row provided
+     * and determines if the predefined required fields exist
+     * and returns based of that examination.
+     * 
+     * @param array $row
+     * @return boolean 
+     */
     public function validateRequiredFieldsInRow($row)
     {
         $requiredFields = $this->getRequiredFields();
@@ -40,6 +54,13 @@ class PluginBsdImporterCsv extends PluginBsdImporter
         }
     }
   
+    /**
+     * Validates all rows in csv for the fields set as required
+     * by passing them through $this->validateRequiredFieldsInRow()
+     * 
+     * @see validateRequiredFieldsInRow
+     * @return boolean 
+     */
     public function validateRequiredFields()
     {
         $requiredFields = $this->getRequiredFields();
@@ -54,6 +75,15 @@ class PluginBsdImporterCsv extends PluginBsdImporter
         return true;
     }
 
+    /**
+     * processImport() - Runs validation and beings import functonality 
+     * dryRun gives you the optional parameter that can be passed
+     * on to your execute function so you can treat dryRun import 
+     * differently than a real import.
+     *
+     * @param boolean $dryRun
+     * @return array 
+     */
     public function processImport($dryRun = null)
     {
         if ( $this->validation ==  self::PRE_PROCCESS_VALIDATE )
@@ -84,10 +114,21 @@ class PluginBsdImporterCsv extends PluginBsdImporter
                         $this->execute($rowData);
                 }
         }
- 
-  
+        
+        return array("success" => true);
     }
 
+    /**
+     * execute() - Programmer defined logic for what should be done 
+     * with each row as it's processed. 
+     * 
+     * @see processImport()
+     * @param array $row
+     * @param boolean $dryRun 
+     */ 
+    public function execute($row, $dryRun = false) 
+    {
+    }
 
 
 }

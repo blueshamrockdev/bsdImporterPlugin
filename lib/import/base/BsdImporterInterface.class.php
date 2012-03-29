@@ -23,6 +23,6 @@ interface PluginBsdImporterInterface
     /**
      * action to execute for each row during import process
      */
-    public function execute($row);
+    public function execute($row, $dryRun = false);
 	
 }
