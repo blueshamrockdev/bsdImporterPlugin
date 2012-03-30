@@ -8,71 +8,11 @@ class PluginBsdImporterCsv extends PluginBsdImporter
         if (($handle = fopen($filename, "r")) !== FALSE) 
         {
             while (($data = fgetcsv($handle)) !== FALSE) {
-                $this->DataRows[] = $data;
+                $dataRow = $data;
             }
             fclose($handle);
         }
-    }
-
-    /**
-     * validateHeaders() - Examines the header row in given csv
-     * file and verifies that these headers exist.
-     * 
-     * @return boolean 
-     */
-    public function validateHeaders()
-    {
-        foreach($this->getRequiredHeaders() as $key => $header)
-        {
-          $headers = $this->getHeaders();
-          if($headers[$key] != $header)
-          {
-             return false;
-          }
-        }
-        return true;
-    }
-  
-    /**
-     * validateRequiredFieldsInRow() - examines row provided
-     * and determines if the predefined required fields exist
-     * and returns based of that examination.
-     * 
-     * @param array $row
-     * @return boolean 
-     */
-    public function validateRequiredFieldsInRow($row)
-    {
-        $requiredFields = $this->getRequiredFields();
-        foreach($requiredFields as $key => $reqdField)
-        {
-          $field = $row[$reqdField];
-          if($field == "" || is_null($field) )
-          {
-            return false;
-          }
-        }
-    }
-  
-    /**
-     * Validates all rows in csv for the fields set as required
-     * by passing them through $this->validateRequiredFieldsInRow()
-     * 
-     * @see validateRequiredFieldsInRow
-     * @return boolean 
-     */
-    public function validateRequiredFields()
-    {
-        $requiredFields = $this->getRequiredFields();
-        foreach($this->getDataRows() as $row => $rowData)
-        {
-          $rowTest = $this->validateRequiredFieldsInRow($rowData);
-          if(!$rowTest)
-          {
-            return false;
-          }
-        }
-        return true;
+        $this->DataRows = $this->genHeaderBasedArray($dataRow);
     }
 
     /**
@@ -106,13 +46,7 @@ class PluginBsdImporterCsv extends PluginBsdImporter
                         }
                 }
 
-                if($dryRun)
-                {
-                        $this->dryRunExecute($rowData);
-                }
-                else {
-                        $this->execute($rowData);
-                }
+                $this->execute($rowData, $dryRun);
         }
         
         return array("success" => true);

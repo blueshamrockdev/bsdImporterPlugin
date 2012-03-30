@@ -8,6 +8,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
     const NO_VALIDATION         = 13;
     
     protected $requiredHeaders = array();
+    protected $fileHeaders     = array();
     protected $requiredFields  = array();
     protected $DataRows        = array();
     protected $validation      = self::PRE_PROCESS_VALIDATE;
@@ -16,6 +17,12 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
     {
         $this->readData($fileToProcess);
     }
+
+
+    /*
+     * BEGIN Generic Import specific  ( get it? :D )  functions
+     */
+
 
     /**
      * alias for setRequiredHeaders
@@ -26,6 +33,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
 		$this->requiredHeaders = $headers;
     }
 
+
     /**
      *
      * alias for getRequiredHeaders
@@ -35,6 +43,29 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
     {
 		return $this->requiredHeaders; 
     } 
+
+
+    /**
+     *
+     * @param array $data multideminsional array with the first sub array being headers
+     * @return array 
+     */
+    function genHeaderBasedArray($data)
+    {
+        $this->fileHeaders = array_shift($data);
+        $headerCount = count($this->fileHeaders);
+        $rowdata = array();
+        foreach($data as $row)
+        {
+            if ($headerCount == count($row)) {
+                $rowdata[] = array_combine($this->fileHeaders, $row);
+            } else {
+                trigger_error("ERROR (0014): Array Combination Epic failed -- Column count does not match!");
+            }
+        }
+        return $rowdata;
+    }
+
 
     /**
      * defines when to execute validation 
@@ -61,6 +92,10 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
                     break;
          }
     }
+
+    /*
+     * BEGIN Magic and Misc functions
+     */
 
     /**
      * 
@@ -142,6 +177,99 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
         return $string;
     }
 
+
+    /*
+     * BEGIN validation
+     */
+
+    /**
+     * validateHeaders() - Examines the header row in given csv
+     * file and verifies that these headers exist.
+     * 
+     * @return boolean 
+     */
+    public function validateHeaders()
+    {
+        foreach($this->getRequiredHeaders() as $key => $header)
+        {
+          $headers = $this->getHeaders();
+          if($headers[$key] != $header)
+          {
+             return false;
+          }
+        }
+        return true;
+    }
+
+    public function validateAllRowCount()
+    {
+        foreach($this->getDataRows() as $row => $rowData)
+        {
+          $rowTest = $this->validateRowCount($rowData);
+          if(!$rowTest)
+          {
+            return false;
+          }
+            return true;
+        }
+    }
+
+    public function validateRowCount($row)
+    {
+        if (count($this->fileHeaders) == count($row))
+        {
+                return true;
+        }
+                return false;
+    }
+
+   /**
+     * validateRequiredFieldsInRow() - examines row provided
+     * and determines if the predefined required fields exist
+     * and returns based of that examination.
+     * 
+     * @param array $row
+     * @return boolean 
+     */
+    public function validateRequiredFieldsInRow($row)
+    {
+        $requiredFields = $this->getRequiredFields();
+        foreach($requiredFields as $key => $reqdField)
+        {
+          $field = $row[$reqdField];
+          if($field == "" || is_null($field) )
+          {
+            return false;
+          }
+        }
+    }
+  
+    /**
+     * Validates all rows in csv for the fields set as required
+     * by passing them through $this->validateRequiredFieldsInRow()
+     * 
+     * @see validateRequiredFieldsInRow
+     * @return boolean 
+     */
+    public function validateRequiredFields()
+    {
+        $requiredFields = $this->getRequiredFields();
+        foreach($this->getDataRows() as $row => $rowData)
+        {
+          $rowTest = $this->validateRequiredFieldsInRow($rowData);
+          if(!$rowTest)
+          {
+            return false;
+          }
+        }
+        return true;
+    }
+
+
+    /*
+     * BEGIN import processing
+     */
+
     /**
      * processImport() - Runs validation and beings import functonality 
      * dryRun gives you the optional parameter that can be passed
@@ -156,6 +284,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
         if ( $this->validation ==  self::PRE_PROCCESS_VALIDATE )
         {
             $this->validateRequiredFields();
+            $this->validateAllRowCount();
         }
         elseif ( $this->validation ==  self::BY_ROW_VALIDATE )
         {
@@ -167,7 +296,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
         {
                 if ($rowValidation)
                 {
-                        if (!($this->validateRequiredFieldsInRow($rowData)))
+                        if ( !($this->validateRequiredFieldsInRow($rowData)) && !($this->validateRowCount($row)) )
                         {
                                 return array("success"=> false, "message" => "Validation Error in row  $row.  Please check the file and try again.");
                         }
