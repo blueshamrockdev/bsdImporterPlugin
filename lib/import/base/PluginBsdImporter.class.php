@@ -15,7 +15,12 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
 
     public function __construct($fileToProcess)
     {
-        $this->readData($fileToProcess);
+        /**
+         * @uses subClass::readData() 
+         * 
+         * childClass requirment readData should exist in PluginBsdImporterCsv and PluginBsdImporterExcel
+         */
+        $this->readData($fileToProcess); 
     }
 
 
