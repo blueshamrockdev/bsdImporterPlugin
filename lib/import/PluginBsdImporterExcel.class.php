@@ -4,7 +4,7 @@
  * NOTE: This file (Excel Import) is still in development and is not recommended for use
  *       PLEASE look at the CSV file it is ready for use.
  * 
- * @package PluginBsdImporter (com.blueshamrock.importer)
+ * @package bsdImporterPlugin (com.blueshamrock.importer)
  * @author Micah Breedlove <micah@BlueShamrock.com>
  * 
  * PluginBsdImporterExcel should be extended by YOU the user

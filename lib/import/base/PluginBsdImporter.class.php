@@ -1,7 +1,7 @@
 <?PHP
 
 /**
- * @package PluginBsdImporter (com.blueshamrock.importer)
+ * @package bsdImporterPlugin (com.blueshamrock.importer)
  * @author Micah Breedlove <micah@BlueShamrock.com>
  * 
  * Abstract class which contains functions common to both CSV and Excel 

@@ -1,7 +1,7 @@
 <?PHP
 
 /**
- * @package PluginBsdImporter (com.blueshamrock.importer)
+ * @package bsdImporterPlugin (com.blueshamrock.importer)
  * @author Micah Breedlove <micah@BlueShamrock.com>
  * 
  * PluginBsdImporterCsv should be extended by YOU the user
