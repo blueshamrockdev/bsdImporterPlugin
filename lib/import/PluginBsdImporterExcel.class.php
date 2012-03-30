@@ -1,5 +1,22 @@
 <?PHP
 
+/**
+ * NOTE: This file (Excel Import) is still in development and is not recommended for use
+ *       PLEASE look at the CSV file it is ready for use.
+ * 
+ * @package PluginBsdImporter (com.blueshamrock.importer)
+ * @author Micah Breedlove <micah@BlueShamrock.com>
+ * 
+ * PluginBsdImporterExcel should be extended by YOU the user
+ * it *SHOULD* have everything you need but feel free to do
+ * with it as you see fit 
+ * 
+ * REQUIRED FUNCTION:
+ *    +  execute($row, $dryRun = false) - The execute function is 
+ *        executed on each row of your import. It would be there 
+ *        you would save or do what you will with your data.
+ * 
+ */
 class PluginBsdImporterExcel extends PluginBsdImporter
 {
  	protected $headerRow;

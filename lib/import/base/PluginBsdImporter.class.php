@@ -1,5 +1,18 @@
 <?PHP
 
+/**
+ * @package PluginBsdImporter (com.blueshamrock.importer)
+ * @author Micah Breedlove <micah@BlueShamrock.com>
+ * 
+ * Abstract class which contains functions common to both CSV and Excel 
+ * imports. Your extended classes will require at minimum an execute function
+ * accepting the (array) row to be processed and (boolean) if the execute should
+ * be treated as dry run.
+ * 
+ * @see PluginBsdImporterCsv
+ * @see PluginBsdImporterExcel
+ * 
+ */
 abstract class PluginBsdImporter implements PluginBsdImporterInterface 
 {
 
@@ -13,6 +26,10 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
     protected $DataRows        = array();
     protected $validation      = self::PRE_PROCESS_VALIDATE;
 
+    /**
+     * constructor should I really explain what a constructor is?
+     * @param string $fileToProcess the full path to the CSV/Excel file to parse
+     */
     public function __construct($fileToProcess)
     {
         /**
@@ -323,7 +340,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
      */
     public function execute($row, $dryRun = false) 
     {
-        /** 
+        /* 
          *
          * does nothing here 
          * all the magic is handled in the user's class's execute()
