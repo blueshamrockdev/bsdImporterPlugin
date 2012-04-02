@@ -19,6 +19,10 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
     const PRE_PROCCESS_VALIDATE = 1;
     const BY_ROW_VALIDATE       = 2;
     const NO_VALIDATION         = 13;
+
+    const INVALID_COLUMN_HEADERS  = 'Z';
+    const INVALID_COLUMN_COUNT    = 'Y';
+    const INVALID_REQUIRED_FIELDS = 'X';
     
     protected $requiredHeaders = array();
     protected $fileHeaders     = array();
@@ -40,6 +44,10 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
         $this->readData($fileToProcess); 
     }
 
+    public function getInvalidsArray()
+    {
+                return array( self::INVALID_COLUMN_COUNT, self::INVALID_COLUMN_HEADERS, self::INVALID_REQUIRED_FIELDS);
+    }
 
     /*
      * BEGIN Generic Import specific  ( get it? :D )  functions
@@ -218,31 +226,35 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
           if($headers[$key] != $header)
           {
              return false;
+             //return self::INVALID_COLUMN_HEADERS;
+
           }
         }
         return true;
     }
 
-    public function validateAllRowCount()
+    public function validateAllColumnCount()
     {
         foreach($this->getDataRows() as $row => $rowData)
         {
-          $rowTest = $this->validateRowCount($rowData);
+          $rowTest = $this->validateColumnCount($rowData);
           if(!$rowTest)
           {
-            return false;
+             return false;
+                // return self::INVALID_COLUMN_COUNT;
           }
             return true;
         }
     }
 
-    public function validateRowCount($row)
+    public function validateColumnCount($row)
     {
         if (count($this->fileHeaders) == count($row))
         {
                 return true;
         }
                 return false;
+                // return self::INVALID_COLUMN_COUNT;
     }
 
    /**
@@ -288,6 +300,37 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
     }
 
 
+    /**
+     * preProcessValidation() checks validation if validation IS set to occur before processing
+     * execute validation and return bool (obviously true if valid or false if not)
+     * 
+     * if it is not set for preProcess validation then return the code for when to execute
+     * 
+     * return mixed int|char|boolean
+     */
+    protected function preProcessValidation()
+    {
+        if ( $this->validation ==  self::PRE_PROCCESS_VALIDATE )
+        {
+            $reqdFields = $this->validateRequiredFields();
+            $validColumnCount = $this->validateAllColumnCount();
+            if(!$reqdFields)
+            {
+                    return self::INVALID_REQUIRED_FIELDS;
+            }
+            if(!$validColumnCount)
+            {
+                    return self::INVALID_COLUMN_COUNT;
+            }
+        }
+        else
+        {
+                return $this->validation;
+        }
+
+
+    }
+
     /*
      * BEGIN import processing
      */
@@ -301,31 +344,38 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
      * @param boolean $dryRun 
      * @return array
      */
-    public function processImport($dryRun = false)
+    public function processImport($dryRun = false, $allAsOne = false)
     {
-        if ( $this->validation ==  self::PRE_PROCCESS_VALIDATE )
+
+        $preValidation = $this->preProcessValidation();
+        if ( in_array($preValidation, $this->getInvalidsArray()) )
         {
-            $this->validateRequiredFields();
-            $this->validateAllRowCount();
+            $this->validationFailed($preValidation); // userDefined function
         }
-        elseif ( $this->validation ==  self::BY_ROW_VALIDATE )
+        elseif ($preValidation === self::BY_ROW_VALIDATE)
         {
                 $rowValidation = true;
         }
-
-
-        foreach ($this->DataRows as $row => $rowData)
+        
+        if(!$allAsOne)
         {
-                if ($rowValidation)
+                foreach ($this->DataRows as $row => $rowData)
                 {
-                        if ( !($this->validateRequiredFieldsInRow($rowData)) && !($this->validateRowCount($row)) )
+                        if ($rowValidation)
                         {
-                                return array("success"=> false, "message" => "Validation Error in row  $row.  Please check the file and try again.");
+                                if ( !($this->validateRequiredFieldsInRow($rowData)) && !($this->validateColumnCount($row)) )
+                                {
+                                        return array("success"=> false, "message" => "Validation Error in row  $row.  Please check the file and try again.");
+                                }
                         }
-                }
 
-                $this->execute($rowData, $dryRun);
-                
+                        $this->execute($rowData, $dryRun);
+                        
+                }
+        }
+        else
+        {
+                $this->executeAll($dryRun);
         }
         return array("success" => true);
     }
@@ -349,4 +399,24 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
          *
          */
     } 
+
+    /**
+     * executeAll() - Programmer defined logic for what should be done 
+     * with all rows. 
+     * 
+     * @see processImport()
+     * @param boolean $dryRun 
+     */ 
+    public function executeAll($dryRun = false)
+    {
+        /* 
+         *
+         * does nothing here 
+         * all the magic is handled in the user's class's executeAll()
+         * I don't know what you want to do with your imports... 
+         * I'm not psychic :D
+         *
+         */
+ 
+    }
 }
