@@ -34,6 +34,26 @@ class PluginBsdImporterCsv extends PluginBsdImporter
     }
 
     /**
+     * validationFailed() - User defined function so you can say what 
+     * to do with validation errors. 
+     * 
+     * @param mixed $validationErrorCode  - should be constant from for
+     * validation error
+     */
+    public function validationFailed($validationErrorCode)
+    {
+        /**
+         * This is the point when your extended class should kick in.
+         * The execute function is executed on all rows instead of 
+         * individual rows and do with the data what you will. 
+         * 
+         * You have all the weapons you need.
+         * Now fight.
+         * 
+         * @uses subclass::validationFailed($validationErrorCode)
+         */
+    }
+    /**
      * execute() - Programmer defined logic for what should be done 
      * with each row as it's processed. 
      * 
@@ -64,5 +84,25 @@ class PluginBsdImporterCsv extends PluginBsdImporter
          */
      }
 
+    /**
+     * executeAll() - Programmer defined logic for what should be done 
+     * with each row as it's processed. 
+     * 
+     * @see processImport()
+     * @param boolean $dryRun 
+     */ 
+    public function executeAll($dryRun = false) 
+    {
+        /**
+         * This is the point when your extended class should kick in.
+         * The execute function is executed on all rows instead of 
+         * individual rows and do with the data what you will. 
+         * 
+         * You have all the weapons you need.
+         * Now fight.
+         * 
+         * @uses subclass::executeAll($dryRun = false)
+         */
+     }
 
 }
