@@ -341,10 +341,12 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
      * on to your execute function so you can treat dryRun import 
      * differently than a real import.
      * 
-     * @param boolean $dryRun 
+     * @param boolean $dryRun Process import in a dry-run
+     * @param boolean $allAsOne Process data as one big chunk instead of row-by-row 
+     * @param array $options Optional parameters which can be handed off to execute or executeAll
      * @return array
      */
-    public function processImport($dryRun = false, $allAsOne = false)
+    public function processImport($dryRun = false, $allAsOne = false, $options = array())
     {
 
         $preValidation = $this->preProcessValidation();
@@ -369,13 +371,13 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
                                 }
                         }
 
-                        $this->execute($rowData, $dryRun);
+                        $this->execute($rowData, $dryRun, $options = array());
                         
                 }
         }
         else
         {
-                $this->executeAll($dryRun);
+                $this->executeAll($dryRun, $options = array());
         }
         return array("success" => true);
     }
@@ -387,8 +389,9 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
      * @see processImport()
      * @param array $row
      * @param boolean $dryRun 
+     * @param array $options
      */
-    public function execute($row, $dryRun = false) 
+    public function execute($row, $dryRun = false, $options = array()) 
     {
         /* 
          *
@@ -406,8 +409,9 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
      * 
      * @see processImport()
      * @param boolean $dryRun 
+     * @param array $options
      */ 
-    public function executeAll($dryRun = false)
+    public function executeAll($dryRun = false, $options = array())
     {
         /* 
          *
