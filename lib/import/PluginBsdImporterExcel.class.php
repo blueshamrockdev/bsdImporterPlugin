@@ -12,7 +12,7 @@
  * with it as you see fit 
  * 
  * REQUIRED FUNCTION:
- *    +  execute($row, $dryRun = false) - The execute function is 
+ *    +  execute($row, $dryRun = false, $options = array()) - The execute function is 
  *        executed on each row of your import. It would be there 
  *        you would save or do what you will with your data.
  * 

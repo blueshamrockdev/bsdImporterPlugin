@@ -9,9 +9,17 @@
  * with it as you see fit 
  * 
  * REQUIRED FUNCTION:
- *    +  execute($row, $dryRun = false) - The execute function is 
+ *    +  execute($row, $dryRun = false, $options = array()) - The execute function is 
  *        executed on each row of your import. It would be there 
  *        you would save or do what you will with your data.
+ * 
+ *    +  executeAll($dryRun = false, $options = array()) - The executeAll function is 
+ *        executed on all rows of your import. It would be there 
+ *        you would save or do what you will with your data.
+ * 
+ *    +  validationFailed($validationErrorCode) - The validationFailed function is the
+ *        default handler for dealing with validation errors and how to report that 
+ *        back to your users.
  * 
  */
 class PluginBsdImporterCsv extends PluginBsdImporter
@@ -53,6 +61,7 @@ class PluginBsdImporterCsv extends PluginBsdImporter
          * @uses subclass::validationFailed($validationErrorCode)
          */
     }
+
     /**
      * execute() - Programmer defined logic for what should be done 
      * with each row as it's processed. 
@@ -60,8 +69,9 @@ class PluginBsdImporterCsv extends PluginBsdImporter
      * @see processImport()
      * @param array $row
      * @param boolean $dryRun 
+     * @param array $options
      */ 
-    public function execute($row, $dryRun = false) 
+    public function execute($row, $dryRun = false, $options = array()) 
     {
         /**
          * This is the point when your extended class should kick in.
@@ -72,7 +82,7 @@ class PluginBsdImporterCsv extends PluginBsdImporter
          * You have all the weapons you need.
          * Now fight.
          * 
-         * @uses subclass::execute($row, $dryRun = false)
+         * @uses subclass::execute($row, $dryRun = false, $options = array())
          */
         /* 
          *
@@ -90,8 +100,9 @@ class PluginBsdImporterCsv extends PluginBsdImporter
      * 
      * @see processImport()
      * @param boolean $dryRun 
+     * @param array $options
      */ 
-    public function executeAll($dryRun = false) 
+    public function executeAll($dryRun = false, $options = array()) 
     {
         /**
          * This is the point when your extended class should kick in.
@@ -101,7 +112,7 @@ class PluginBsdImporterCsv extends PluginBsdImporter
          * You have all the weapons you need.
          * Now fight.
          * 
-         * @uses subclass::executeAll($dryRun = false)
+         * @uses subclass::executeAll($dryRun = false, $options = array())
          */
      }
 
