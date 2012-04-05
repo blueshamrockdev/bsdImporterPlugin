@@ -15,7 +15,10 @@ Your extended classes will require the following functions:
 * validationFailed($failureCode) - The validationFailed function accepts the (CONST string) validation Code of the given error. It allows you to define what happens when an error occurs.
   
 Execution
-=========
+---------
+Execution in your application occurs by using the processImport function. processImport accepts 3 arguments:  
+**dryRun** (*default: false*), **allAsOne** (process all rows instead of row by row. *default: false*) and **options** (*default: empty array*).  
+All three (3) of these arguments are passed to the appropriate execute(All) function.  
 The following examples assumes you have extended the appropriate importer class (in this example bsdPaymentCSVImport extends PluginBsdImporterCsv):  
     
     $payments = new bsdPaymentCSVImport($csvFile);  
