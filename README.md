@@ -10,14 +10,16 @@ Create your own classes which extend the appropriate class and with in a few min
 will be ready to being the import process.  
   
 Your extended classes will require the following functions:  
-* execute($row, $dryRun = false, $options = array()) - The execute function accepts the (array) row to be processed and (boolean) if the execute should be treated as dry run and lastly (array) options.  
-* executeAll($dryRun = false, $options = array()) - The executeAll function accepts (boolean) if the execute should be treated as dry run and lastly (array) options.  
-* validationFailed($failureCode) - The validationFailed function accepts the (CONST string) validation Code of the given error. It allows you to define what happens when an error occurs.
+ * execute($row, $dryRun = false, $options = array()) - The execute function accepts the (array) row to be processed and (boolean) if the execute should be treated as dry run and lastly (array) options.  
+ * executeAll($dryRun = false, $options = array()) - The executeAll function accepts (boolean) if the execute should be treated as dry run and lastly (array) options.  
+ * validationFailed($failureCode) - The validationFailed function accepts the (CONST string) validation Code of the given error. It allows you to define what happens when an error occurs.
   
 Execution
 ---------
 Execution in your application occurs by using the processImport function. processImport accepts 3 arguments:  
-**dryRun** (*default: false*), **allAsOne** (process all rows instead of row by row. *default: false*) and **options** (*default: empty array*).  
+ * **dryRun** (*default: false*)  
+ * **allAsOne** (process all rows instead of row by row. *default: false*)  
+ * **options** (*default: empty array*)   
 All three (3) of these arguments are passed to the appropriate execute(All) function.  
 The following examples assumes you have extended the appropriate importer class (in this example bsdPaymentCSVImport extends PluginBsdImporterCsv):  
     
