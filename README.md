@@ -12,7 +12,7 @@ will be ready to being the import process.
 Your extended classes will require the following functions:  
  * execute($row, $dryRun = false, $options = array()) - The execute function accepts the (array) row to be processed and (boolean) if the execute should be treated as dry run and lastly (array) options.  
  * executeAll($dryRun = false, $options = array()) - The executeAll function accepts (boolean) if the execute should be treated as dry run and lastly (array) options.  
- * validationFailed($failureCode) - The validationFailed function accepts the (CONST string) validation Code of the given error. It allows you to define what happens when an error occurs.
+ * validationFailed($failureCode) - The validationFailed function accepts the (CONST string) validation Code of the given error. It allows you to define what happens when an error occurs.  
   
 Execution
 ---------
