@@ -247,7 +247,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
         }
     }
 
-    public function validateColumnCount($row)
+    protected function validateColumnCount($row)
     {
         if (count($this->fileHeaders) == count($row))
         {
@@ -265,7 +265,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
      * @param array $row
      * @return boolean 
      */
-    public function validateRequiredFieldsInRow($row)
+    protected function validateRequiredFieldsInRow($row)
     {
         $requiredFields = $this->getRequiredFields();
         foreach($requiredFields as $key => $reqdField)
