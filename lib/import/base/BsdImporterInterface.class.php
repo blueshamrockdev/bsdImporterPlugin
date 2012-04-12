@@ -18,11 +18,15 @@ interface PluginBsdImporterInterface
     /**
      * the actual import process
      */
-    public function processImport($dryRun = false);
+    public function processImport($dryRun = false, $allAsOne = false, $options = array());
 
     /**
      * action to execute for each row during import process
      */
-    public function execute($row, $dryRun = false);
+    public function execute($row, $dryRun = false, $options = array());
 	
+    /**
+     * action to execute for all rows during import process
+     */
+    public function executeAll($dryRun = false, $options = array());
 }

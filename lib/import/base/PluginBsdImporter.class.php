@@ -13,7 +13,7 @@
  * @see PluginBsdImporterExcel
  * 
  */
-abstract class PluginBsdImporter # implements PluginBsdImporterInterface 
+abstract class PluginBsdImporter 
 {
 
     const PRE_PROCESS_VALIDATE  = 1;
