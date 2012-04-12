@@ -17,9 +17,9 @@
  *        executed on all rows of your import. It would be there 
  *        you would save or do what you will with your data.
  * 
- *    +  validationFailed($validationErrorCode) - The validationFailed function is the
- *        default handler for dealing with validation errors and how to report that 
- *        back to your users.
+ *    +  validationFailed($validationErrorCode, $options = array()) - The validationFailed 
+ *        function is the default handler for dealing with validation errors and how to 
+ *        report that back to your users.
  * 
  */
 class PluginBsdImporterCsv extends PluginBsdImporter
@@ -39,6 +39,10 @@ class PluginBsdImporterCsv extends PluginBsdImporter
             fclose($handle);
         }
         $this->DataRows = $this->genHeaderBasedArray($dataRow);
+        if(isset($this->DataRows['success']) && $this->DataRows['success'] === false)
+        {
+                return $this->DataRows;
+        }
     }
 
     /**
@@ -48,7 +52,7 @@ class PluginBsdImporterCsv extends PluginBsdImporter
      * @param mixed $validationErrorCode  - should be constant from for
      * validation error
      */
-    public function validationFailed($validationErrorCode)
+    public function validationFailed($validationErrorCode, $options = array())
     {
         /**
          * This is the point when your extended class should kick in.
@@ -58,8 +62,14 @@ class PluginBsdImporterCsv extends PluginBsdImporter
          * You have all the weapons you need.
          * Now fight.
          * 
-         * @uses subclass::validationFailed($validationErrorCode)
+         * @uses subclass::validationFailed($validationErrorCode, $options = array())
          */
+
+         // generic functionality provided
+         return array(
+              "success" => false,
+              "message" => $this->errorMessages[$validationErrorCode],
+         );
     }
 
     /**

@@ -29,6 +29,11 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
     protected $requiredFields  = array();
     protected $DataRows        = array();
     protected $validation      = self::PRE_PROCESS_VALIDATE;
+    protected $errorMessages   = array(
+        self::INVALID_COLUMN_HEADERS  => "ERROR (0014): Headers do not match required column headers.",
+        self::INVALID_COLUMN_COUNT    => "ERROR (0015): Array Combination Epic failed -- Column count does not match!",
+        self::INVALID_REQUIRED_FIELDS => "ERROR (0016): Required field was found empty. Please check file and try again.",
+    );
 
     /**
      * constructor should I really explain what a constructor is?
@@ -90,7 +95,8 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
             if ($headerCount == count($row)) {
                 $rowdata[] = array_combine($this->fileHeaders, $row);
             } else {
-                trigger_error("ERROR (0014): Array Combination Epic failed -- Column count does not match!");
+               // trigger_error("ERROR (0015): Array Combination Epic failed -- Column count does not match!");
+                return $this->validationFailed(self::INVALID_COLUMN_COUNT); // userDefined function
             }
         }
         return $rowdata;
@@ -128,7 +134,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
      */
 
     /**
-     * 
+     * Never mind that curtain. Pay it no attention... look over here. Look. See? A bunny!
      * hooray for magic!!
      *
      * @param string $method
@@ -155,7 +161,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
                         throw new Exception("Function ($verb) Not Defined");
                 }
         } catch (Exception $e) {
-                trigger_error("Error (0013): Exception Thrown No User to catch it. Please insert quarter and try again.   \n\n " . $e, E_USER_ERROR);
+                trigger_error("[DEV] Error (0013): Exception Thrown No User to catch it. Please insert quarter and try again.   \n\n " . $e, E_USER_ERROR);
         }
     }
 
@@ -170,7 +176,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
     { 
         if (!property_exists($this, $fieldName)) 
         { 
-            trigger_error("Variable ($fieldName) Not Found", E_USER_ERROR);
+            trigger_error("[DEV] Error (0012): Variable ($fieldName) Not Found", E_USER_ERROR);
         }
 
         return $this->$fieldName;
@@ -186,7 +192,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
     public function set($fieldName, $value) 
     {
             if (!property_exists($this, $fieldName)) {
-                    trigger_error("Variable ($fieldName) Not Found", E_USER_ERROR);
+                    trigger_error("[DEV] Error (0012): Variable ($fieldName) Not Found", E_USER_ERROR);
             }
 
             $this->$fieldName = $value;
@@ -207,6 +213,9 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
         return $string;
     }
 
+    /*
+     * END Magic and Misc functions
+     */
 
     /*
      * BEGIN validation
@@ -352,7 +361,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
         $preValidation = $this->preProcessValidation();
         if ( in_array($preValidation, $this->getInvalidsArray()) )
         {
-            $this->validationFailed($preValidation); // userDefined function
+            return $this->validationFailed($preValidation); // user defined function (generic function provided)
         }
         elseif ($preValidation === self::BY_ROW_VALIDATE)
         {
