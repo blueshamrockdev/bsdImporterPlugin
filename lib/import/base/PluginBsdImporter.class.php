@@ -13,10 +13,10 @@
  * @see PluginBsdImporterExcel
  * 
  */
-abstract class PluginBsdImporter implements PluginBsdImporterInterface 
+abstract class PluginBsdImporter # implements PluginBsdImporterInterface 
 {
 
-    const PRE_PROCCESS_VALIDATE = 1;
+    const PRE_PROCESS_VALIDATE  = 1;
     const BY_ROW_VALIDATE       = 2;
     const NO_VALIDATION         = 13;
 
@@ -46,6 +46,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
          * 
          * childClass requirment readData should exist in PluginBsdImporterCsv and PluginBsdImporterExcel
          */
+        $this->setValidation("pre");
         $this->readData($fileToProcess); 
     }
 
@@ -93,7 +94,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
         foreach($data as $row)
         {
             if ($headerCount == count($row)) {
-                $rowdata[] = array_combine($this->fileHeaders, $row);
+                 $rowdata[] = array_combine($this->fileHeaders, $row);
             } else {
                // trigger_error("ERROR (0015): Array Combination Epic failed -- Column count does not match!");
                 return $this->validationFailed(self::INVALID_COLUMN_COUNT); // userDefined function
@@ -285,6 +286,7 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
             return false;
           }
         }
+        return true;
     }
   
     /**
@@ -319,25 +321,26 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
      */
     protected function preProcessValidation()
     {
-        if ( $this->validation ==  self::PRE_PROCCESS_VALIDATE )
+        #if ( $this->validation ==  self::PRE_PROCESS_VALIDATE )
+        #{
+        $reqdFields = $this->validateRequiredFields();
+        $validColumnCount = $this->validateAllColumnCount();
+        if(!$reqdFields)
         {
-            $reqdFields = $this->validateRequiredFields();
-            $validColumnCount = $this->validateAllColumnCount();
-            if(!$reqdFields)
-            {
-                    return self::INVALID_REQUIRED_FIELDS;
-            }
-            if(!$validColumnCount)
-            {
-                    return self::INVALID_COLUMN_COUNT;
-            }
+                return self::INVALID_REQUIRED_FIELDS;
         }
-        else
+        if(!$validColumnCount)
         {
-                return $this->validation;
+                return self::INVALID_COLUMN_COUNT;
         }
+        #}
+        #else
+        #{
+        #        return $this->validation;
+        #}
 
 
+            return "valid";
     }
 
     /*
@@ -358,10 +361,13 @@ abstract class PluginBsdImporter implements PluginBsdImporterInterface
     public function processImport($dryRun = false, $allAsOne = false, $options = array())
     {
 
-        $preValidation = $this->preProcessValidation();
-        if ( in_array($preValidation, $this->getInvalidsArray()) )
+        if ( $this->validation ==  self::PRE_PROCESS_VALIDATE )
         {
-            return $this->validationFailed($preValidation); // user defined function (generic function provided)
+                $preValidation = $this->preProcessValidation();
+                if ( in_array($preValidation, $this->getInvalidsArray()) )
+                {
+                    return $this->validationFailed($preValidation); // user defined function (generic function provided)
+                }
         }
         elseif ($preValidation === self::BY_ROW_VALIDATE)
         {

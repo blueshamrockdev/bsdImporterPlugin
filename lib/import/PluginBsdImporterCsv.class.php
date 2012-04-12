@@ -34,7 +34,7 @@ class PluginBsdImporterCsv extends PluginBsdImporter
         if (($handle = fopen($filename, "r")) !== FALSE) 
         {
             while (($data = fgetcsv($handle)) !== FALSE) {
-                $dataRow = $data;
+                $dataRow[] = $data;
             }
             fclose($handle);
         }
