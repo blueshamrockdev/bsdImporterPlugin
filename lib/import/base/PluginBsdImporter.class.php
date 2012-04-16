@@ -31,7 +31,7 @@ abstract class PluginBsdImporter
     protected $validation      = self::PRE_PROCESS_VALIDATE;
     protected $errorMessages   = array(
         self::INVALID_COLUMN_HEADERS  => "ERROR (0014): Headers do not match required column headers.",
-        self::INVALID_COLUMN_COUNT    => "ERROR (0015): Array Combination Epic failed -- Column count does not match!",
+        self::INVALID_COLUMN_COUNT    => "ERROR (0015): Array Combination Failed: column count does not match!",
         self::INVALID_REQUIRED_FIELDS => "ERROR (0016): Required field was found empty. Please check file and try again.",
     );
 
@@ -59,7 +59,6 @@ abstract class PluginBsdImporter
      * BEGIN Generic Import specific  ( get it? :D )  functions
      */
 
-
     /**
      * alias for setRequiredHeaders
      * @param array $headers 
@@ -86,21 +85,22 @@ abstract class PluginBsdImporter
      * @param array $data multideminsional array with the first sub array being headers
      * @return array 
      */
-    function genHeaderBasedArray($data)
+    function genHeaderBasedArray()
     {
-        $this->fileHeaders = array_shift($data);
         $headerCount = count($this->fileHeaders);
         $rowdata = array();
-        foreach($data as $row)
+        foreach($this->DataRows as $rowNum => $row)
         {
             if ($headerCount == count($row)) {
                  $rowdata[] = array_combine($this->fileHeaders, $row);
             } else {
-               // trigger_error("ERROR (0015): Array Combination Epic failed -- Column count does not match!");
-                return $this->validationFailed(self::INVALID_COLUMN_COUNT); // userDefined function
+                 $this->badRow = $rowNum + 2; // 0 based index + 1 for header row
+                 // trigger_error("ERROR (0015): Array Combination Epic failed -- Column count does not match!");
+               return false;
             }
         }
-        return $rowdata;
+        $this->DataRows = $rowdata;
+        return true;
     }
 
 
@@ -232,11 +232,11 @@ abstract class PluginBsdImporter
     {
         foreach($this->getRequiredHeaders() as $key => $header)
         {
-          $headers = $this->getHeaders();
+          $headers = $this->getFileHeaders();
           if($headers[$key] != $header)
           {
+             $this->badHeader = $header;
              return false;
-             //return self::INVALID_COLUMN_HEADERS;
 
           }
         }
@@ -250,6 +250,7 @@ abstract class PluginBsdImporter
           $rowTest = $this->validateColumnCount($rowData);
           if(!$rowTest)
           {
+             $this->badRow = $row + 2; // 0 based index + 1 for header row
              return false;
                 // return self::INVALID_COLUMN_COUNT;
           }
@@ -280,9 +281,9 @@ abstract class PluginBsdImporter
         $requiredFields = $this->getRequiredFields();
         foreach($requiredFields as $key => $reqdField)
         {
-          $field = $row[$reqdField];
-          if($field == "" || is_null($field) )
+          if(!(isset($row[$reqdField])) || ($row[$reqdField] == "" || is_null($row[$reqdField])))
           {
+            $this->badColumn = $reqdField;
             return false;
           }
         }
@@ -304,6 +305,7 @@ abstract class PluginBsdImporter
           $rowTest = $this->validateRequiredFieldsInRow($rowData);
           if(!$rowTest)
           {
+                  $this->badRow = $row + 2;
             return false;
           }
         }
@@ -317,30 +319,22 @@ abstract class PluginBsdImporter
      * 
      * if it is not set for preProcess validation then return the code for when to execute
      * 
-     * return mixed int|char|boolean
+     * return mixed char|null
      */
     protected function preProcessValidation()
     {
-        #if ( $this->validation ==  self::PRE_PROCESS_VALIDATE )
-        #{
         $reqdFields = $this->validateRequiredFields();
         $validColumnCount = $this->validateAllColumnCount();
-        if(!$reqdFields)
-        {
-                return self::INVALID_REQUIRED_FIELDS;
-        }
         if(!$validColumnCount)
         {
                 return self::INVALID_COLUMN_COUNT;
         }
-        #}
-        #else
-        #{
-        #        return $this->validation;
-        #}
-
-
-            return "valid";
+        if(!$reqdFields)
+        {
+                return self::INVALID_REQUIRED_FIELDS;
+        }
+        
+        return null;
     }
 
     /*
@@ -358,8 +352,18 @@ abstract class PluginBsdImporter
      * @param array $options Optional parameters which can be handed off to execute or executeAll
      * @return array
      */
-    public function processImport($dryRun = false, $allAsOne = false, $options = array())
+    public function processImport($dryRun = false, $options = array())
     {
+        // Check Headers
+        if(!$this->validateHeaders())
+        {
+                return $this->validationFailed(self::INVALID_COLUMN_HEADERS);
+        }
+                
+        $redoHeaders = $this->genHeaderBasedArray();
+        if (!$redoHeaders) {
+                return $this->validationFailed(self::INVALID_COLUMN_COUNT);
+        }
 
         if ( $this->validation ==  self::PRE_PROCESS_VALIDATE )
         {
@@ -371,14 +375,30 @@ abstract class PluginBsdImporter
         }
         elseif ($preValidation === self::BY_ROW_VALIDATE)
         {
-                $rowValidation = true;
+                $options['rowValidation'] = true;
         }
         
+        return $this->doImport($dryRun, $options);
+        
+    }
+
+    /**
+     * doImport - Meat & Potatos
+     *
+     *
+     * @param boolean $dryRun Process import in a dry-run
+     * @param array $options Optional parameters which can be handed off to execute or executeAll
+     * @return array
+     *  
+     */
+    protected function doImport($dryRun = false, $options = array())
+    {
+        $allAsOne = (isset($options['allAsOne'])) ? $options['allAsOne'] : false;
         if(!$allAsOne)
         {
                 foreach ($this->DataRows as $row => $rowData)
                 {
-                        if ($rowValidation)
+                        if ($options['rowValidation'])
                         {
                                 if ( !($this->validateRequiredFieldsInRow($rowData)) && !($this->validateColumnCount($row)) )
                                 {
@@ -396,7 +416,8 @@ abstract class PluginBsdImporter
         }
         return array("success" => true);
     }
-    
+
+
     /**
      * execute() - Programmer defined logic for what should be done 
      * with each row as it's processed. 
