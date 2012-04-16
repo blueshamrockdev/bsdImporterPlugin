@@ -38,11 +38,9 @@ class PluginBsdImporterCsv extends PluginBsdImporter
             }
             fclose($handle);
         }
-        $this->DataRows = $this->genHeaderBasedArray($dataRow);
-        if(isset($this->DataRows['success']) && $this->DataRows['success'] === false)
-        {
-                return $this->DataRows;
-        }
+        $this->fileHeaders = array_shift($dataRow);
+        //set temporarily as index based arrays will do headerBased on importProcess
+        $this->DataRows = $dataRow;
     }
 
     /**
@@ -66,10 +64,24 @@ class PluginBsdImporterCsv extends PluginBsdImporter
          */
 
          // generic functionality provided
-         return array(
-              "success" => false,
-              "message" => $this->errorMessages[$validationErrorCode],
-         );
+
+         $message = "";
+         if(isset($this->badRow)) {
+                  $message .= " ROW: " . $this->badRow;
+         }
+         
+         if(isset($this->badColumn)) {
+                  $message .= " COLUMN: " . $this->badColumn;
+         }
+
+         if(isset($this->badHeader)) {
+                  $message .=  " HEADER: " . $this->badHeader;
+
+         }
+                        return array(
+                                "success" => false,
+                                "message" => $this->errorMessages[$validationErrorCode] . " " . $message,
+                        );
     }
 
     /**
