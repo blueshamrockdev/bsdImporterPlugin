@@ -406,15 +406,15 @@ abstract class PluginBsdImporter
                                 }
                         }
 
-                        $this->execute($rowData, $dryRun, $options = array());
+                        $data = $this->execute($rowData, $dryRun, $options = array());
                         
                 }
         }
         else
         {
-                $this->executeAll($dryRun, $options = array());
+                $data = $this->executeAll($dryRun, $options = array());
         }
-        return array("success" => true);
+        return array("success" => true, "data" => $data);
     }
 
 
