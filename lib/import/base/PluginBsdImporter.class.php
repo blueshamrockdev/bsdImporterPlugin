@@ -414,7 +414,7 @@ abstract class PluginBsdImporter
         {
                 $data = $this->executeAll($dryRun, $options = array());
         }
-        return array("success" => true, "data" => $data);
+        return $data;
     }
 
 
