@@ -31,6 +31,7 @@ class PluginBsdImporterCsv extends PluginBsdImporter
      */
     public function readData($filename)
     {
+        ini_set('auto_detect_line_endings', true);
         if (($handle = fopen($filename, "r")) !== FALSE) 
         {
             while (($data = fgetcsv($handle)) !== FALSE) {
