@@ -14,6 +14,10 @@ Your extended classes will require the following functions:
  * executeAll($dryRun = false, $options = array()) - The executeAll function accepts (boolean) if the execute should be treated as dry run and lastly (array) options.  
  * validationFailed($failureCode) - The validationFailed function accepts the (CONST string) validation Code of the given error. It allows you to define what happens when an error occurs.  
   
+Dependency
+---------
+[PHP Excel](http://phpexcel.codeplex.com)  
+
 Execution
 ---------
 Execution in your application occurs by using the processImport function. processImport accepts 2 arguments:  
