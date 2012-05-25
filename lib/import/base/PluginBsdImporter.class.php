@@ -24,6 +24,7 @@ abstract class PluginBsdImporter
     const INVALID_COLUMN_COUNT    = 'Y';
     const INVALID_REQUIRED_FIELDS = 'X';
     
+    protected $allowOptionalHeaders = false;
     protected $requiredHeaders = array();
     protected $fileHeaders     = array();
     protected $requiredFields  = array();
@@ -48,6 +49,11 @@ abstract class PluginBsdImporter
          */
         $this->setValidation("pre");
         $this->readData($fileToProcess); 
+    }
+
+    public function setAllowOptionalHeaders($boolValue)
+    {
+        $this->allowOptionalHeaders = (bool) $boolValue;
     }
 
     public function getInvalidsArray()
@@ -235,9 +241,12 @@ abstract class PluginBsdImporter
           $headers = $this->getFileHeaders();
           if($headers[$key] != $header)
           {
-             $this->badHeader = $header;
-             return false;
-
+                if($this->allowOptionalHeaders){
+                        continue;
+                } else{
+                        $this->badHeader = $header;
+                        return false;
+                }
           }
         }
         return true;
