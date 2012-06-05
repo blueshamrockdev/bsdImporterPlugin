@@ -23,6 +23,7 @@ abstract class PluginBsdImporter
     const INVALID_COLUMN_HEADERS  = 'Z';
     const INVALID_COLUMN_COUNT    = 'Y';
     const INVALID_REQUIRED_FIELDS = 'X';
+    const INVALID_ROW_COUNT       = 'W';
     
     protected $allowOptionalHeaders = false;
     protected $requiredHeaders = array();
@@ -34,6 +35,7 @@ abstract class PluginBsdImporter
         self::INVALID_COLUMN_HEADERS  => "ERROR (0014): Headers do not match required column headers.",
         self::INVALID_COLUMN_COUNT    => "ERROR (0015): Array Combination Failed: column count does not match!",
         self::INVALID_REQUIRED_FIELDS => "ERROR (0016): Required field was found empty. Please check file and try again.",
+        self::INVALID_ROW_COUNT       => "ERROR (0017): No valid rows were found to process. Please check file and try again.",
     );
 
     /**
@@ -58,7 +60,7 @@ abstract class PluginBsdImporter
 
     public function getInvalidsArray()
     {
-                return array( self::INVALID_COLUMN_COUNT, self::INVALID_COLUMN_HEADERS, self::INVALID_REQUIRED_FIELDS);
+                return array( self::INVALID_COLUMN_COUNT, self::INVALID_COLUMN_HEADERS, self::INVALID_REQUIRED_FIELDS, self::INVALID_ROW_COUNT);
     }
 
     /*
@@ -332,17 +334,27 @@ abstract class PluginBsdImporter
      */
     protected function preProcessValidation()
     {
-        $reqdFields = $this->validateRequiredFields();
-        $validColumnCount = $this->validateAllColumnCount();
-        if(!$validColumnCount)
-        {
-                return self::INVALID_COLUMN_COUNT;
-        }
-        if(!$reqdFields)
+        // Validate Required Fields
+        if(!$this->validateRequiredFields())
         {
                 return self::INVALID_REQUIRED_FIELDS;
         }
-        
+
+        // Verify Row Count 
+        /**
+         *done after Validation incase overloaded validation skips/ignores/unsets invalid rows
+         */
+        if(count($this->getDataRows()) == 0)
+        {
+                return self::INVALID_ROW_COUNT;
+        }
+
+        // Validate Columns Count of All Rows
+        if(!$this->validateAllColumnCount())
+        {
+                return self::INVALID_COLUMN_COUNT;
+        }
+
         return null;
     }
 
