@@ -35,7 +35,15 @@ class PluginBsdImporterCsv extends PluginBsdImporter
         if (($handle = fopen($filename, "r")) !== FALSE) 
         {
             while (($data = fgetcsv($handle)) !== FALSE) {
-                $dataRow[] = $data;
+                     
+                    /**
+                     * here to commit 187's on blank lines
+                     * this is ugly. I want to puke. I am working on a nicer cleanier prettier solution
+                     */
+                    if(json_encode($data)!= "[null]")
+                    {
+                        $dataRow[] = $data;
+                    }
             }
             fclose($handle);
         }
